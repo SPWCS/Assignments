@@ -1,6 +1,6 @@
 -- 1.Write SQL command to create a database named hremployeeDB and a table named HR_Employee with columns for EmployeeID, Department, JobRole, 
-Attrition, Gender, Age, MaritalStatus, Education, EducationField, BusinessTravel, JobInvolvement, JobLevel, JobSatisfaction, Hourlyrate, Income, Salaryhike,
-OverTime, Workex, YearsSinceLastPromotion, EmpSatisfaction, TrainingTimesLastYear, WorkLifeBalance, Performance_Rating, and set EmployeeID as the primary key
+-- Attrition, Gender, Age, MaritalStatus, Education, EducationField, BusinessTravel, JobInvolvement, JobLevel, JobSatisfaction, Hourlyrate, Income, Salaryhike,
+-- OverTime, Workex, YearsSinceLastPromotion, EmpSatisfaction, TrainingTimesLastYear, WorkLifeBalance, Performance_Rating, and set EmployeeID as the primary key
 
 create database hremployeeDB;
 
