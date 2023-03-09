@@ -55,6 +55,15 @@ count(*) * 100/sum(count(*)) over() as 'Percentage'
 from hr_employee where attrition='yes' group by jobrole order by percentage desc limit 1;
 
 -- 12.Show Distribution of Employee's Promotion, Find the maximum chances of employee getting promoted.
+SELECT CASE WHEN YearsSinceLastPromotion >= 2 AND joblevel <= 2 THEN 'high'
+            WHEN YearsSinceLastPromotion >= 5 AND joblevel <= 5 THEN 'medium'
+            ELSE 'low'
+       END AS promotion_chances,
+       COUNT(*) AS num_employees,
+       ROUND(COUNT(*) / (SELECT COUNT(*) FROM hr_employee) * 100, 2) AS promotion_rate
+FROM hr_employee
+GROUP BY promotion_chances
+ORDER BY num_employees DESC;
 
 -- 13.Find the Attrition Rate for Marital Status.
 select maritalstatus,count(*) as no_of_attrition,
@@ -81,5 +90,61 @@ select jobsatisfaction,count(*) as no_of_attrition,
 count(*) * 100/sum(count(*)) over() as 'Percentage' 
 from hr_employee where attrition='yes' group by jobsatisfaction;
 
--- 
+-- 18.key reasons for Attrition in Company.
+select * from (SELECT concat('JobRole: ',JobRole) as key_reason , 
+       ROUND(COUNT(CASE WHEN Attrition like 'YES' THEN 1 END) / COUNT(*) * 100, 2) AS attrition_rate 
+FROM hr_employee 
+GROUP BY JobRole
+order by attrition_rate desc limit 1) as first
+union
+select * from
+(select concat('MaritalStatus: ',MaritalStatus) as key_reason,ROUND(COUNT(*) / (SELECT COUNT(*) FROM hr_employee where Attrition like 'Y%') * 100, 2) AS attrition_rate 
+from hr_employee where Attrition like 'Y%' group by MaritalStatus
+order by attrition_rate desc limit 1) as second
+union
+select * from(select concat('Education: ',Education) as key_reason, ROUND(COUNT(*) / (SELECT COUNT(*) FROM hr_employee where Attrition like 'Y%') * 100, 2) AS attrition_rate 
+from hr_employee 
+where Attrition like 'Y%'
+group by Education
+order by attrition_rate desc limit 1) as third
+union
+select * from(
+select concat('BusinessTravel: ',BusinessTravel) as key_reason, ROUND(COUNT(*) / (SELECT COUNT(*) FROM hr_employee where Attrition like 'Y%') * 100, 2) AS Travel_rate
+from hr_employee 
+where Attrition like 'Y%'
+group by BusinessTravel
+order by Travel_rate desc limit 1) as fourth
+union
+select * from(
+select concat('JobInvolvement: ',JobInvolvement) as key_reason, ROUND(COUNT(*) / (SELECT COUNT(*) FROM hr_employee where Attrition like 'Y%') * 100, 2) AS JobInvovlement_rate
+from hr_employee 
+where Attrition like 'Y%'
+group by JobInvolvement
+order by JobInvovlement_rate desc limit 1
+)as five
+union 
+select * from(
+select concat('JobSatisfaction: ',JobSatisfaction) as key_reason, ROUND(COUNT(*) / (SELECT COUNT(*) FROM hr_employee where Attrition like 'Y%') * 100, 2) AS attrition_rate 
+from hr_employee 
+where Attrition like 'Y%'
+group by JobSatisfaction
+order by attrition_rate desc limit 1) as six
+order by attrition_rate desc limit 5;
+
+
+
+-- 19.Return all employee where WorkEx greater than 10,
+-- provided that they travel frequently, WorkLifeBalance as Good and JobSatisfaction is Very High.
+
+select * from hr_employee where workex > 10 and BusinessTravel like '%frequent%' and worklifebalance='Good' and jobsatisfaction='very high' ;
+
+-- 20.Write query to display who has better WorkLifeBalance ,
+-- Married, Single or Divorced provided that Performace_Rating is Outstanding. 
+
+select distinct worklifebalance from hr_employee;
+select maritalstatus, count(*) as BetterWorkLifeBalanceCount
+from hr_employee
+where worklifebalance='Better' and performance_rating='Outstanding'
+group by maritalstatus
+order by BetterWorkLifeBalanceCount desc;
 
