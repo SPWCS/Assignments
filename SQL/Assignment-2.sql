@@ -24,7 +24,9 @@ select * from hr_employee;
 select count(*) as no_of_employee,department,count(*) * 100/sum(count(*)) over() as 'Percentage' from hr_employee group by department;
 
 -- 4.Which gender have higher strength as workforce in each department?
-select gender,count(gender) as total_no,department from hr_employee group by gender,department order by total_no desc limit 3;
+SELECT department, gender, concat(count(*)/max(EmployeeID)*100, '%') as workforce
+FROM hr_employee
+GROUP BY department, gender;
 
 -- 5.Show the workforce in each Job Role
 select jobrole,count(*) as total_no from hr_employee group by jobrole;
@@ -36,7 +38,7 @@ update hr_employee set age_group= if (age <= 20, '<20' , if(age>35 ,'35+' , '20-
 select age_group,count(*) as emp_num from hr_employee group by age_group; 
 
 -- 7.Compare all marital status of employee and find the most frequent marital status.  --
-select maritalstatus,count(maritalstatus) as no_of_emp from hr_employee group by maritalstatus;
+select MaritalStatus,count(maritalstatus) as mostFrequent from hr_employee group by MaritalStatus order by mostFrequent desc;
 
 -- 8.What is Job satisfaction level of employee?
 select JobSatisfaction,count(JobSatisfaction) as no_of_emp_satisfied from hr_employee group by JobSatisfaction;
